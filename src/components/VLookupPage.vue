@@ -15,9 +15,6 @@ const sourceFile = ref<string>('');
 const sourceFileObj = ref<File | null>(null); // 存储文件对象引用
 const sourceSheet = ref<string>(''); // 源文件工作表选择
 const lookupValue = ref<string>('');
-const tableArray = ref<string>('');
-const colIndex = ref<string>('');
-const rangeLookup = ref<boolean>(false);
 const generatedFormula = ref<string>('');
 
 // 公式单元格地址和匹配关键字
