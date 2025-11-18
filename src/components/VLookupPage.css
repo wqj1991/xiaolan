@@ -1,0 +1,595 @@
+/* 全局动画 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.vlookup-container {
+  width: 100%;
+  height: 100vh;
+  background-color: var(--color-background);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: var(--color-background);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.back-button {
+  padding: 8px 16px;
+  background-color: var(--color-primary-lighter);
+  border: 1px solid var(--color-primary);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--color-primary-dark);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.back-button:hover {
+  background-color: var(--color-primary-light);
+  border-color: var(--color-primary-dark);
+  transform: translateY(-1px);
+}
+
+.page-title {
+  margin-left: 16px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.vlookup-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* 通用卡片样式 */
+.welcome-message, .function-info, .function-syntax, .file-selection-section, .vlookup-params-section, .formula-result, .header-matching-section {
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.welcome-message:hover, .function-info:hover, .function-syntax:hover, .file-selection-section:hover, .vlookup-params-section:hover, .formula-result:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.welcome-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 24px;
+  background-color: var(--color-primary-lighter);
+  border: 1px solid var(--color-primary-light);
+}
+
+.vlookup-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  transition: transform 0.3s ease;
+}
+
+.welcome-message:hover .vlookup-icon {
+  transform: scale(1.05);
+}
+
+.welcome-message h3 {
+  font-size: 20px;
+  margin-bottom: 8px;
+  color: var(--color-primary-dark);
+}
+
+.welcome-message p {
+  color: var(--color-text-secondary);
+  font-size: 14px;
+}
+
+.function-info h4, .function-syntax h4, .file-selection-section h4, .vlookup-params-section h4, .formula-result h4 {
+  font-size: 16px;
+  margin-bottom: 16px;
+  color: var(--color-text-primary);
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.function-info p {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+.function-syntax code {
+  display: block;
+  padding: 12px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-size: 14px;
+  color: #e74c3c;
+}
+
+/* 文件选择区域样式 */
+/* 让文件选择区域根据窗口大小自动调整布局 */
+.file-selection-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 文件选择容器 */
+.file-selection-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.file-select-group {
+  margin-bottom: 0;
+  padding: 16px;
+  background-color: #f8f8f8;
+  border-radius: 6px;
+  border-left: 3px solid var(--color-primary);
+  /* 默认情况下占据50%宽度（减去间距） */
+  flex: 1;
+  min-width: 300px;
+}
+
+.file-select-group:last-child {
+  border-left-color: var(--color-primary-dark);
+}
+
+/* 响应式调整 - 在小屏幕上垂直排列 */
+@media (max-width: 768px) {
+  .file-select-group {
+    width: 100%;
+    min-width: auto;
+  }
+}
+
+.form-group {
+    margin-bottom: 16px;
+    position: relative;
+  }
+
+  .loading-text {
+    margin-left: 8px;
+    font-size: 14px;
+    color: #007bff;
+    font-style: italic;
+  }
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.file-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background-color: var(--color-background);
+  font-size: 14px;
+  transition: border-color 0.2s ease;
+}
+
+.file-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.1);
+}
+
+.sheet-select, .param-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background-color: var(--color-background);
+  font-size: 14px;
+  color: var(--color-text-primary);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sheet-select:focus, .param-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.1);
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
+  padding: 8px 12px;
+  background-color: #e8f5e9;
+  border-radius: 4px;
+  font-size: 13px;
+  border: 1px solid transparent;
+  transition: border-color 0.2s ease;
+}
+
+.file-info:hover {
+  border-color: var(--color-primary-light);
+}
+
+.file-name {
+  flex: 1;
+  color: var(--color-primary-dark);
+  word-break: break-all;
+  margin-right: 8px;
+  font-weight: 500;
+}
+
+.reset-button {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  background-color: transparent;
+  border: 1px solid var(--color-primary);
+  border-radius: 50%;
+  color: var(--color-primary-dark);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.reset-button:hover {
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  transform: scale(1.1);
+}
+
+.file-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: #f5f5f5;
+}
+
+/* 参数设置区域样式 */
+.params-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background-color: #f8f8f8;
+  border-radius: 4px;
+}
+
+.checkbox-group input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--color-primary);
+}
+
+.checkbox-group label {
+  margin: 0;
+  font-weight: normal;
+  color: var(--color-text-secondary);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.generate-button {
+  padding: 12px 28px;
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 180px;
+  position: relative;
+  overflow: hidden;
+}
+
+.generate-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.generate-button:hover:not(:disabled) {
+  background-color: var(--color-primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3);
+}
+
+.generate-button:hover:not(:disabled)::before {
+  left: 100%;
+}
+
+.generate-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.validation-error {
+  color: #e74c3c;
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
+}
+
+/* 标头匹配区域样式 */
+.header-matching-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.error-message {
+  color: #e74c3c;
+  font-size: 14px;
+  padding: 12px;
+  background-color: #ffebee;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  border-left: 3px solid #e74c3c;
+}
+
+.header-results {
+  margin-top: 20px;
+  padding: 16px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+}
+
+.header-results h5 {
+  margin: 0 0 16px 0;
+  font-size: 15px;
+  color: var(--color-text-primary);
+  padding-bottom: 8px;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.header-result-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  padding: 8px 0;
+}
+
+.header-result-item:last-child {
+  margin-bottom: 0;
+}
+
+.result-label {
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  min-width: 180px;
+  font-size: 14px;
+}
+
+.result-value {
+  flex: 1;
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-size: 14px;
+  color: var(--color-primary-dark);
+  background-color: #e8f5e9;
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-right: 8px;
+  font-weight: 500;
+}
+
+.copy-small-button {
+  padding: 4px 10px;
+  background-color: var(--color-primary-lighter);
+  border: 1px solid var(--color-primary);
+  border-radius: 4px;
+  font-size: 12px;
+  color: var(--color-primary-dark);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.copy-small-button:hover:not(:disabled) {
+  background-color: var(--color-primary-light);
+  transform: translateY(-1px);
+}
+
+.copy-small-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: #f5f5f5;
+  border-color: #ddd;
+  color: #999;
+}
+
+/* 生成公式按钮区域 */
+.generate-formula-section {
+  margin-top: 20px;
+  text-align: center;
+}
+
+/* 公式结果区域样式 */
+.formula-result {
+  border-left: 3px solid var(--color-primary);
+}
+
+.formula-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  position: relative;
+  border: 1px solid #e0e0e0;
+}
+
+.formula-box code {
+  flex: 1;
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-size: 14px;
+  color: #e74c3c;
+  word-break: break-all;
+  font-weight: 500;
+}
+
+.copy-button {
+  padding: 8px 16px;
+  background-color: var(--color-primary-lighter);
+  border: 1px solid var(--color-primary);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--color-primary-dark);
+  transition: all 0.2s ease;
+}
+
+.copy-button:hover {
+  background-color: var(--color-primary-light);
+  border-color: var(--color-primary-dark);
+}
+
+/* 滚动条样式 */
+.vlookup-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.vlookup-content::-webkit-scrollbar-track {
+  background: var(--color-background);
+  border-radius: 4px;
+}
+
+.vlookup-content::-webkit-scrollbar-thumb {
+  background-color: var(--color-border);
+  border-radius: 4px;
+  border: 2px solid var(--color-background);
+}
+
+.vlookup-content::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-border-light);
+}
+
+/* 多值显示样式 */
+.multiple-values {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* 标签样式 */
+.result-value.tag {
+  display: inline-flex;
+  align-items: center;
+  background-color: #e0f2fe;
+  color: #0369a1;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  margin-right: 8px;
+  margin-bottom: 8px;
+}
+
+/* 标签中的复制按钮 */
+.copy-tag-button {
+  background: none;
+  border: none;
+  color: #0369a1;
+  cursor: pointer;
+  font-size: 12px;
+  margin-left: 6px;
+  padding: 2px 4px;
+  border-radius: 2px;
+  transition: background-color 0.2s;
+}
+
+.copy-tag-button:hover {
+  background-color: rgba(3, 105, 161, 0.1);
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .vlookup-content {
+    padding: 16px;
+    gap: 16px;
+  }
+  
+  .page-title {
+    font-size: 16px;
+    margin-left: 12px;
+  }
+  
+  .header {
+    padding: 10px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .vlookup-content {
+    padding: 12px;
+  }
+  
+  .result-label {
+    min-width: 140px;
+    font-size: 13px;
+  }
+  
+  .result-value {
+    font-size: 13px;
+  }
+  
+  .generate-button {
+    padding: 10px 20px;
+    min-width: 150px;
+  }
+}
