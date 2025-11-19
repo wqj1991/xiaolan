@@ -293,7 +293,6 @@ function getDescription(featureId: string): string {
 /* 功能卡片网格 */
 .features-grid {
   width: 100%;
-  max-width: 1200px;
   display: flex;
   flex-direction: column;
   gap: 40px;

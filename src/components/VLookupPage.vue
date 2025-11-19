@@ -273,17 +273,7 @@ function copyToClipboard(text: string, isButtonNotification: boolean = false) {
   }
 }
 
-// 复制公式到剪贴板
-function copyFormula() {
-  copyToClipboard(generatedFormula.value, true);
-}
-
-// 复制标头地址到剪贴板
-function copyHeaderAddress(address: string) {
-  if (address && address !== '未找到') {
-    copyToClipboard(address, false);
-  }
-}
+// 注意：之前的复制函数已被移除，因为当前实现使用弹出层统一管理结果
 
 // 合并检查结果和生成公式的新函数
 async function checkAndGenerateFormula() {
@@ -336,38 +326,7 @@ async function checkAndGenerateFormula() {
   }
 }
 
-// 复制所有结果到剪贴板
-function copyAllResults() {
-  if (!mergedResult.value.checkResults || !mergedResult.value.formula) return;
-  
-  const results = mergedResult.value.checkResults;
-  let allResults = '检查结果与生成公式\n\n';
-  
-  // 添加检查结果
-  allResults += '检查结果:\n';
-  allResults += `- 要查找的姓名: ${results.targetHeaderCellValue && results.targetHeaderAddress !== '未找到' ? 
-    `${results.targetHeaderCellValue} (${results.targetHeaderAddress})` : '未找到'}\n`;
-  allResults += `- 操作表的姓名表头单元格: ${results.targetNameHeaderCellValue && results.targetNameHeaderCellAddress ? 
-    `${results.targetNameHeaderCellValue} (${results.targetNameHeaderCellAddress})` : '未找到'}\n`;
-  allResults += `- 数据表姓名表头单元格: ${results.sourceNameHeaderCellValue && results.sourceNameHeaderCellAddress ? 
-    `${results.sourceNameHeaderCellValue} (${results.sourceNameHeaderCellAddress})` : '未找到'}\n`;
-  
-  if (results.dataSourceRange) {
-    allResults += `- 数据表数据查找范围: ${results.dataSourceRange}\n`;
-  }
-  if (results.matchLookupValue) {
-    allResults += `- MATCH函数查找值: ${results.matchLookupValue}\n`;
-  }
-  if (results.matchLookupRange) {
-    allResults += `- MATCH函数数据范围: ${results.matchLookupRange}\n`;
-  }
-  
-  // 添加生成的公式
-  allResults += '\n生成的公式:\n';
-  allResults += mergedResult.value.formula;
-  
-  copyToClipboard(allResults, false);
-}
+// 注意：复制相关函数已被移除，因为当前实现使用弹出层统一管理结果
 
 // 检查标头并获取单元格地址
 async function checkHeaders() {
