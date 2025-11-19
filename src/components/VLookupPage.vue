@@ -49,6 +49,14 @@ const sourceSheets = ref<string[]>([]);
 const isLoadingTargetSheets = ref<boolean>(false);
 const isLoadingSourceSheets = ref<boolean>(false);
 
+// 合并结果弹出层相关状态
+const showResultModal = ref<boolean>(false);
+const mergedResult = ref<{checkResults: any, formula: string}>({
+  checkResults: null,
+  formula: ''
+});
+const isProcessing = ref<boolean>(false);
+
 // 处理返回按钮点击
 function handleBack() {
   emit('back');
@@ -163,14 +171,7 @@ const canGenerateFormula = computed(() => {
   // 2. 数据表数据查找范围 (dataSourceRange)
   // 3. MATCH函数查找值 (matchLookupValue)
   // 4. MATCH函数数据范围 (matchLookupRange)
-  console.log('targetHeaderAddress.value:', targetHeaderAddress.value);
-  console.log('dataSourceRange.value:', dataSourceRange.value);
-  console.log('matchLookupValue.value:', matchLookupValue.value);
-  console.log('matchLookupRange.value:', matchLookupRange.value);
-
-  const b = targetHeaderAddress.value !== '' && dataSourceRange.value !== '' && matchLookupValue.value !== '' && matchLookupRange.value !== '';
-  console.log('b:', b);
-  return (b);
+  return (targetHeaderAddress.value !== '' && dataSourceRange.value !== '' && matchLookupValue.value !== '' && matchLookupRange.value !== '');
 });
 
 // 生成VLOOKUP公式
@@ -282,6 +283,90 @@ function copyHeaderAddress(address: string) {
   if (address && address !== '未找到') {
     copyToClipboard(address, false);
   }
+}
+
+// 合并检查结果和生成公式的新函数
+async function checkAndGenerateFormula() {
+  // 验证输入
+  if (!dataToConfigure.value.trim()) {
+    headerSearchError.value = '请输入要匹配的关键字';
+    return;
+  }
+  
+  if (!targetFile.value || !targetSheet.value || !sourceFile.value || !sourceSheet.value) {
+    headerSearchError.value = '请先选择目标文件和源文件及其工作表';
+    return;
+  }
+  
+  isProcessing.value = true;
+  headerSearchError.value = '';
+  
+  try {
+    // 1. 执行检查标头操作
+    await checkHeaders();
+    
+    // 2. 检查是否成功找到必要的信息
+    if (isHeaderSearchComplete.value && !headerSearchError.value) {
+      // 3. 如果检查成功，生成公式
+      generateFormula();
+      
+      // 4. 合并检查结果和生成的公式
+      mergedResult.value = {
+        checkResults: {
+          targetHeaderCellValue: targetHeaderCellValue.value,
+          targetHeaderAddress: targetHeaderAddress.value,
+          targetNameHeaderCellValue: targetNameHeaderCellValue.value,
+          targetNameHeaderCellAddress: targetNameHeaderCellAddress.value,
+          sourceNameHeaderCellValue: sourceNameHeaderCellValue.value,
+          sourceNameHeaderCellAddress: sourceNameHeaderCellAddress.value,
+          dataSourceRange: dataSourceRange.value,
+          matchLookupValue: matchLookupValue.value,
+          matchLookupRange: matchLookupRange.value
+        },
+        formula: generatedFormula.value
+      };
+      
+      // 5. 显示弹出层
+      showResultModal.value = true;
+    }
+  } catch (error) {
+    headerSearchError.value = error instanceof Error ? error.message : '处理过程中发生错误';
+  } finally {
+    isProcessing.value = false;
+  }
+}
+
+// 复制所有结果到剪贴板
+function copyAllResults() {
+  if (!mergedResult.value.checkResults || !mergedResult.value.formula) return;
+  
+  const results = mergedResult.value.checkResults;
+  let allResults = '检查结果与生成公式\n\n';
+  
+  // 添加检查结果
+  allResults += '检查结果:\n';
+  allResults += `- 要查找的姓名: ${results.targetHeaderCellValue && results.targetHeaderAddress !== '未找到' ? 
+    `${results.targetHeaderCellValue} (${results.targetHeaderAddress})` : '未找到'}\n`;
+  allResults += `- 操作表的姓名表头单元格: ${results.targetNameHeaderCellValue && results.targetNameHeaderCellAddress ? 
+    `${results.targetNameHeaderCellValue} (${results.targetNameHeaderCellAddress})` : '未找到'}\n`;
+  allResults += `- 数据表姓名表头单元格: ${results.sourceNameHeaderCellValue && results.sourceNameHeaderCellAddress ? 
+    `${results.sourceNameHeaderCellValue} (${results.sourceNameHeaderCellAddress})` : '未找到'}\n`;
+  
+  if (results.dataSourceRange) {
+    allResults += `- 数据表数据查找范围: ${results.dataSourceRange}\n`;
+  }
+  if (results.matchLookupValue) {
+    allResults += `- MATCH函数查找值: ${results.matchLookupValue}\n`;
+  }
+  if (results.matchLookupRange) {
+    allResults += `- MATCH函数数据范围: ${results.matchLookupRange}\n`;
+  }
+  
+  // 添加生成的公式
+  allResults += '\n生成的公式:\n';
+  allResults += mergedResult.value.formula;
+  
+  copyToClipboard(allResults, false);
 }
 
 // 检查标头并获取单元格地址
@@ -423,8 +508,6 @@ function findHeaderInFile(file: File | null, sheetName: string, header: string, 
         // 获取工作表范围
         const range = XLSX.utils.decode_range(worksheet['!ref'] || 'A1:A1');
         const rangeStr = worksheet['!ref'] || 'A1:A1';
-
-        console.log('range:', range);
         
         let foundAddress = '';
         const nameAddresses: string[] = [];
@@ -633,122 +716,69 @@ function findHeaderInFile(file: File | null, sheetName: string, header: string, 
               <!-- 按钮区域 - 移至数据源Excel文件右下角 -->
               <div class="bottom-right-buttons">
                 <button 
-                  class="generate-button check-button" 
-                  @click="checkHeaders"
-                  :disabled="isSearchingHeaders || !targetFile || !targetSheet || !sourceFile || !sourceSheet || !dataToConfigure.trim()"
+                  class="generate-button merged-button" 
+                  @click="checkAndGenerateFormula"
+                  :disabled="isProcessing || isSearchingHeaders || !targetFile || !targetSheet || !sourceFile || !sourceSheet || !dataToConfigure.trim()"
                 >
-                  {{ isSearchingHeaders ? '检查中...' : '检查' }}
-                </button>
-                <button 
-                  class="generate-button formula-button" 
-                  @click="generateFormula"
-                  :disabled="!canGenerateFormula"
-                >
-                  生成公式
+                  {{ isProcessing ? '处理中...' : '检查并生成公式' }}
                 </button>
               </div>
             </div>
           </div>
         </div>
-      
-      <!-- 标头匹配和地址查找区域 -->
-      <div class="header-matching-section">
-        <h4>检查结果</h4>
-        
-        <!-- 错误提示 -->
-        <div class="error-message" v-if="headerSearchError">
-          {{ headerSearchError }}
-        </div>
-        
-        <!-- 检查结果显示 -->
-        <div class="header-results" v-if="isHeaderSearchComplete">
-          <h5>检查结果</h5>
-          
-          <!-- 标头地址结果 -->
-          <div class="header-result-item">
-            <span class="result-label">要查找的姓名: </span>
-            <span class="result-value">{{ targetHeaderCellValue && targetHeaderAddress !== '未找到' ? `${targetHeaderCellValue} (${targetHeaderAddress})` : '未找到' }}</span>
-            <button 
-              class="copy-small-button" 
-              @click="copyHeaderAddress(targetHeaderCellValue)"
-              :disabled="!targetHeaderCellValue || targetHeaderAddress === '未找到'"
-              title="复制姓名"
-            >
-              {{ targetHeaderCellValue && targetHeaderAddress !== '未找到' ? '复制' : '' }}
-            </button>
-          </div>
-          <div class="header-result-item">
-            <span class="result-label">操作表的姓名表头单元格：</span>
-            <span class="result-value">{{ targetNameHeaderCellValue && targetNameHeaderCellAddress ? `${targetNameHeaderCellValue} (${targetNameHeaderCellAddress})` : '未找到' }}</span>
-            <button 
-              class="copy-small-button" 
-              @click="copyHeaderAddress(targetNameHeaderCellAddress)"
-              :disabled="!targetNameHeaderCellAddress"
-              title="复制地址"
-            >
-              {{ targetNameHeaderCellAddress ? '复制' : '' }}
-            </button>
-          </div>
-          <div class="header-result-item">
-            <span class="result-label">数据表姓名表头单元格：</span>
-            <span class="result-value">{{ sourceNameHeaderCellValue && sourceNameHeaderCellAddress ? `${sourceNameHeaderCellValue} (${sourceNameHeaderCellAddress})` : '未找到' }}</span>
-            <button 
-              class="copy-small-button" 
-              @click="copyHeaderAddress(sourceNameHeaderCellAddress)"
-              :disabled="!sourceNameHeaderCellAddress"
-              title="复制地址"
-            >
-              {{ sourceNameHeaderCellAddress ? '复制' : '' }}
-            </button>
-          </div>
-          <!-- 数据源范围 -->
-          <div class="header-result-item" v-if="dataSourceRange">
-            <span class="result-label">数据表数据查找范围：</span>
-            <span class="result-value">{{ dataSourceRange }}</span>
-            <button 
-              class="copy-small-button" 
-              @click="copyHeaderAddress(dataSourceRange)"
-              title="复制范围"
-            >
-              复制
-            </button>
-          </div>
-          
-          <!-- MATCH函数相关信息 -->
-          <div class="header-result-item" v-if="matchLookupValue">
-            <span class="result-label">MATCH函数查找值：</span>
-            <span class="result-value">{{ matchLookupValue }}</span>
-            <button 
-              class="copy-small-button" 
-              @click="copyHeaderAddress(matchLookupValue)"
-              :disabled="!matchLookupValue"
-              title="复制查找值"
-            >
-              {{ matchLookupValue ? '复制' : '' }}
-            </button>
-          </div>
-          <div class="header-result-item" v-if="matchLookupRange">
-            <span class="result-label">MATCH函数数据范围：</span>
-            <span class="result-value">{{ matchLookupRange }}</span>
-            <button 
-              class="copy-small-button" 
-              @click="copyHeaderAddress(matchLookupRange)"
-              title="复制范围"
-            >
-              复制
-            </button>
-          </div>
-        </div>
+    </div>
+  </div>
+  
+  <!-- 结果弹出层 -->
+  <div class="result-modal" v-if="showResultModal">
+    <div class="modal-overlay" @click="showResultModal = false"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>检查结果与生成公式</h3>
+        <button class="close-button" @click="showResultModal = false">×</button>
       </div>
-      
-
-      
-      <!-- 生成的公式显示区域 -->
-      <div class="formula-result" v-if="generatedFormula">
-        <h4>生成的公式</h4>
-        <div class="formula-box">
-          <code>{{ generatedFormula }}</code>
-          <button class="copy-button" @click="copyFormula">复制</button>
+      <div class="modal-body">
+        <!-- 检查结果区域 -->
+        <div class="check-results-section">
+          <h4>检查结果</h4>
+          <div class="result-item">
+            <span class="result-label">要查找的姓名: </span>
+            <span class="result-value">{{ mergedResult.checkResults?.targetHeaderCellValue && mergedResult.checkResults?.targetHeaderAddress !== '未找到' ? 
+              `${mergedResult.checkResults.targetHeaderCellValue} (${mergedResult.checkResults.targetHeaderAddress})` : '未找到' }}</span>
+          </div>
+          <div class="result-item">
+            <span class="result-label">操作表的姓名表头单元格：</span>
+            <span class="result-value">{{ mergedResult.checkResults?.targetNameHeaderCellValue && mergedResult.checkResults?.targetNameHeaderCellAddress ? 
+              `${mergedResult.checkResults.targetNameHeaderCellValue} (${mergedResult.checkResults.targetNameHeaderCellAddress})` : '未找到' }}</span>
+          </div>
+          <div class="result-item">
+            <span class="result-label">数据表姓名表头单元格：</span>
+            <span class="result-value">{{ mergedResult.checkResults?.sourceNameHeaderCellValue && mergedResult.checkResults?.sourceNameHeaderCellAddress ? 
+              `${mergedResult.checkResults.sourceNameHeaderCellValue} (${mergedResult.checkResults.sourceNameHeaderCellAddress})` : '未找到' }}</span>
+          </div>
+          <div class="result-item" v-if="mergedResult.checkResults?.dataSourceRange">
+            <span class="result-label">数据表数据查找范围：</span>
+            <span class="result-value">{{ mergedResult.checkResults.dataSourceRange }}</span>
+          </div>
+          <div class="result-item" v-if="mergedResult.checkResults?.matchLookupValue">
+            <span class="result-label">MATCH函数查找值：</span>
+            <span class="result-value">{{ mergedResult.checkResults.matchLookupValue }}</span>
+          </div>
+          <div class="result-item" v-if="mergedResult.checkResults?.matchLookupRange">
+            <span class="result-label">MATCH函数数据范围：</span>
+            <span class="result-value">{{ mergedResult.checkResults.matchLookupRange }}</span>
+          </div>
+        </div>
+        
+        <!-- 生成的公式区域 -->
+        <div class="formula-section">
+          <h4>生成的公式</h4>
+          <div class="formula-box">
+            <code>{{ mergedResult.formula }}</code>
+            <button class="copy-button" @click="copyToClipboard(mergedResult.formula, true)">
+              复制公式
+            </button>
+          </div>
         </div>
       </div>
     </div>
