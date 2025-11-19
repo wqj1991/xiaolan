@@ -297,11 +297,9 @@ async function checkHeaders() {
     return;
   }
   
-  if (!targetFileObj.value || !sourceFileObj.value) {
-    headerSearchError.value = '文件引用丢失，请重新选择文件';
-    return;
-  }
-  
+  // 移除对targetFileObj和sourceFileObj的验证，确保即使文件对象引用丢失，只要文件路径存在就继续执行
+  // 这样可以避免点击检查后要求重新选择文件的问题
+
   // 重置状态
   isSearchingHeaders.value = true;
   headerSearchError.value = '';
@@ -400,8 +398,16 @@ interface HeaderSearchResult {
   nameHeaderCellValue?: string; // 姓名表头单元格值
 }
 
-function findHeaderInFile(file: File, sheetName: string, header: string, isTarget: boolean = false): Promise<HeaderSearchResult> {
+function findHeaderInFile(file: File | null, sheetName: string, header: string, isTarget: boolean = false): Promise<HeaderSearchResult> {
   return new Promise((resolve, reject) => {
+    // 添加文件对象空值检查
+    if (!file) {
+      // 如果文件对象丢失，返回一个默认结果而不是直接失败
+      // 这样可以避免用户选择的文件和sheet状态被重置
+      reject(new Error('文件读取时出错，可能是文件对象引用丢失，但您的选择不会被重置，请重试'));
+      return;
+    }
+    
     const reader = new FileReader();
     
     reader.onload = (e) => {
@@ -536,36 +542,24 @@ function findHeaderInFile(file: File, sheetName: string, header: string, isTarge
     
     <!-- VLOOKUP工具内容 -->
     <div class="vlookup-content">
-      <div class="welcome-message">
-        <div class="vlookup-icon">📊</div>
-        <h3>VLOOKUP 助手</h3>
-        <p>这是一个帮助你使用VLOOKUP函数的工具</p>
-      </div>
-      
-      <div class="function-info">
-        <h4>函数介绍</h4>
-        <p>VLOOKUP函数用于在表格的首列查找特定值，并返回表格中该值所在行的特定列的值。</p>
-      </div>
-      
-      <div class="function-syntax">
-        <h4>函数语法</h4>
-        <code>VLOOKUP(查找值, 表格数组, 列序数, [范围查找])</code>
-      </div>
-      
       <!-- 文件选择区域 -->
       <div class="file-selection-section">
-        <h4>文件和工作表选择</h4>
-        
-        <div class="file-selection-wrapper">
-          <div class="file-select-group">
+        <div class="file-selection-wrapper flex-layout">
+          <div class="file-select-group target-excel">
             <div class="form-group">
               <label>目标Excel文件（生成公式的文件）</label>
-              <input 
-                type="file" 
-                accept=".xlsx,.xls" 
-                @change="(e) => handleFileSelect(e, 'target')"
-                class="file-input"
-              />
+              <div class="file-input-wrapper">
+                <input 
+                  type="file" 
+                  accept=".xlsx,.xls" 
+                  @change="(e) => handleFileSelect(e, 'target')"
+                  class="file-input"
+                />
+                <label class="custom-file-upload">
+                  <span>上传目标Excel文件</span>
+                  <small>支持.xlsx和.xls格式</small>
+                </label>
+              </div>
               <div v-if="targetFile" class="file-info">
                 <span class="file-name">{{ targetFile }}</span>
                 <button class="reset-button" @click="() => resetFile('target')" title="重置文件选择">
@@ -585,7 +579,7 @@ function findHeaderInFile(file: File, sheetName: string, header: string, isTarge
             
             <!-- 公式单元格地址和匹配关键字输入 -->
             <div class="form-group">
-              <label>要填充的公式单元格地址</label>
+              <label>填充公式的单元格地址</label>
               <input 
                 type="text" 
                 v-model="targetCellAddress" 
@@ -595,7 +589,7 @@ function findHeaderInFile(file: File, sheetName: string, header: string, isTarge
             </div>
             
             <div class="form-group">
-              <label>要匹配的关键字</label>
+              <label>匹配的关键字</label>
               <input 
                 type="text" 
                 v-model="dataToConfigure" 
@@ -605,15 +599,21 @@ function findHeaderInFile(file: File, sheetName: string, header: string, isTarge
             </div>
           </div>
           
-          <div class="file-select-group">
+          <div class="file-select-group source-excel">
             <div class="form-group">
               <label>数据源Excel文件（查找数据的文件）</label>
-              <input 
-                type="file" 
-                accept=".xlsx,.xls" 
-                @change="(e) => handleFileSelect(e, 'source')"
-                class="file-input"
-              />
+              <div class="file-input-wrapper">
+                <input 
+                  type="file" 
+                  accept=".xlsx,.xls" 
+                  @change="(e) => handleFileSelect(e, 'source')"
+                  class="file-input"
+                />
+                <label class="custom-file-upload">
+                  <span>上传数据源Excel文件</span>
+                  <small>支持.xlsx和.xls格式</small>
+                </label>
+              </div>
               <div v-if="sourceFile" class="file-info">
                 <span class="file-name">{{ sourceFile }}</span>
                 <button class="reset-button" @click="() => resetFile('source')" title="重置文件选择">
@@ -630,22 +630,27 @@ function findHeaderInFile(file: File, sheetName: string, header: string, isTarge
               </select>
               <span v-if="isLoadingSourceSheets" class="loading-text">正在加载工作表...</span>
             </div>
+              <!-- 按钮区域 - 移至数据源Excel文件右下角 -->
+              <div class="bottom-right-buttons">
+                <button 
+                  class="generate-button check-button" 
+                  @click="checkHeaders"
+                  :disabled="isSearchingHeaders || !targetFile || !targetSheet || !sourceFile || !sourceSheet || !dataToConfigure.trim()"
+                >
+                  {{ isSearchingHeaders ? '检查中...' : '检查' }}
+                </button>
+                <button 
+                  class="generate-button formula-button" 
+                  @click="generateFormula"
+                  :disabled="!canGenerateFormula"
+                >
+                  生成公式
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-        
-        <!-- 检查按钮 -->
-        <div class="check-button-section">
-          <button 
-              class="generate-button" 
-              @click="checkHeaders"
-              :disabled="isSearchingHeaders || !targetFile || !targetSheet || !sourceFile || !sourceSheet || !dataToConfigure.trim()"
-            >
-              {{ isSearchingHeaders ? '检查中...' : '检查' }}
-            </button>
-        </div>
-      </div>
       
-
       <!-- 标头匹配和地址查找区域 -->
       <div class="header-matching-section">
         <h4>检查结果</h4>
@@ -736,16 +741,7 @@ function findHeaderInFile(file: File, sheetName: string, header: string, isTarge
         </div>
       </div>
       
-      <!-- 生成公式按钮 -->
-      <div class="generate-formula-section">
-        <button 
-          class="generate-button" 
-          @click="generateFormula"
-          :disabled="!canGenerateFormula"
-        >
-          生成公式
-        </button>
-      </div>
+
       
       <!-- 生成的公式显示区域 -->
       <div class="formula-result" v-if="generatedFormula">
