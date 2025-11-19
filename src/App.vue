@@ -19,8 +19,7 @@ interface FeatureGroup {
 // 应用标题
 const appTitle = "办公软件";
 
-// 搜索框内容
-const searchQuery = ref("");
+// 搜索功能将在后续版本中实现
 
 // 功能分组数据
 const featureGroups = ref<FeatureGroup[]>([
