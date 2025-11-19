@@ -28,6 +28,10 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
+.back-button{
+  font-size: 32px;
+}
+
 .back-icon {
   font-size: 32px;
   cursor: pointer;

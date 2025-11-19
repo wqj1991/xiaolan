@@ -618,7 +618,7 @@ function findHeaderInFile(file: File | null, sheetName: string, header: string, 
     <!-- 返回按钮 -->
     <div class="header">
       <button class="back-button" @click="handleBack">
-        ← 返回
+        ←
       </button>
       <h2 class="page-title">VLOOKUP 助手</h2>
     </div>
