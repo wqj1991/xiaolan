@@ -1,0 +1,352 @@
+/* Word批量命名工具全局样式 */
+
+/* 全局变量 */
+:root {
+  --primary-color: #409eff;
+  --primary-hover-color: #66b1ff;
+  --success-color: #67c23a;
+  --warning-color: #e6a23c;
+  --danger-color: #f56c6c;
+  --info-color: #909399;
+
+  --text-primary: #303133;
+  --text-regular: #606266;
+  --text-secondary: #909399;
+  --text-placeholder: #c0c4cc;
+
+  --border-color: #dcdfe6;
+  --border-light: #e4e7ed;
+  --border-lighter: #ebeef5;
+  --border-extra-light: #f2f6fc;
+
+  --background-color: #f5f7fa;
+  --background-color-light: #fafafa;
+
+  --box-shadow-base: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --box-shadow-light: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+
+  --border-radius-base: 4px;
+  --border-radius-small: 2px;
+  --border-radius-large: 6px;
+  --border-radius-round: 8px;
+
+  --transition-base: all 0.3s ease;
+}
+
+/* 滚动条样式 */
+.word-batch-rename-container ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.word-batch-rename-container ::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.word-batch-rename-container ::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.word-batch-rename-container ::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* 动画效果 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* 输入框和按钮通用样式增强 */
+.word-batch-rename-container input[type="text"],
+.word-batch-rename-container input[type="number"],
+.word-batch-rename-container select {
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  outline: none;
+  transition: var(--transition-base);
+}
+
+.word-batch-rename-container input[type="text"]:hover,
+.word-batch-rename-container input[type="number"]:hover,
+.word-batch-rename-container select:hover {
+  border-color: var(--primary-color);
+}
+
+.word-batch-rename-container input[type="text"]:focus,
+.word-batch-rename-container input[type="number"]:focus,
+.word-batch-rename-container select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(64, 158, 255, 0.1);
+}
+
+/* 按钮点击效果 */
+.word-batch-rename-container button:active {
+  transform: scale(0.98);
+}
+
+/* 加载动画 */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(64, 158, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: var(--primary-color);
+  animation: spin 0.8s ease-in-out infinite;
+}
+
+/* 文件拖放区域高亮效果 */
+.file-drop-area.drag-over {
+  border-color: var(--primary-color);
+  background-color: rgba(64, 158, 255, 0.1);
+  transform: scale(1.02);
+}
+
+/* 卡片悬停效果 */
+.summary-card:hover,
+.warning-section:hover {
+  box-shadow: var(--box-shadow-light);
+  transform: translateY(-2px);
+  transition: var(--transition-base);
+}
+
+/* 步骤指示器动画 */
+.step-item.active .step-number {
+  animation: pulse 1s infinite;
+}
+
+.step-number {
+  transition: var(--transition-base);
+}
+
+/* 响应式优化 */
+@media (max-width: 480px) {
+  .word-batch-rename-container .header {
+    padding: 16px;
+  }
+
+  .word-batch-rename-container .page-title {
+    font-size: 20px;
+    margin-left: 16px;
+  }
+
+  .word-batch-rename-container .content-wrapper {
+    padding: 12px;
+  }
+
+  .word-batch-rename-container .main-content {
+    padding: 16px;
+    border-radius: 6px;
+  }
+
+  .word-batch-rename-container .file-drop-area {
+    padding: 20px 16px;
+  }
+
+  .word-batch-rename-container .button-group {
+    gap: 12px;
+  }
+
+  .word-batch-rename-container .primary-button,
+  .word-batch-rename-container .secondary-button {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+}
+
+/* 无障碍支持 */
+.word-batch-rename-container button:focus-visible,
+.word-batch-rename-container input:focus-visible,
+.word-batch-rename-container select:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* 高对比度模式支持 */
+@media (prefers-contrast: high) {
+  :root {
+    --primary-color: #0066cc;
+    --border-color: #000000;
+    --text-primary: #000000;
+    --text-regular: #000000;
+    --background-color: #ffffff;
+  }
+}
+
+/* 减少动画偏好支持 */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* 目标文件夹信息样式 */
+.target-folder-info {
+  margin-top: 20px;
+  padding: 16px;
+  background-color: #d1ecf1;
+  border: 1px solid #bee5eb;
+  border-radius: 8px;
+  border-left: 4px solid #0c5460;
+}
+
+.target-folder-info h4 {
+  margin: 0 0 12px 0;
+  color: #0c5460;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.folder-info {
+  margin: 8px 0;
+  color: #0c5460;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.folder-info code {
+  background-color: #fff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-size: 13px;
+  color: #0c5460;
+  border: 1px solid #bee5eb;
+}
+
+.folder-path {
+  margin-top: 12px;
+  padding: 8px;
+  background-color: #fff;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #0c5460;
+  font-family: 'Consolas', 'Monaco', monospace;
+  word-break: break-all;
+}
+
+/* 重复值警告样式 */
+.duplicate-warning {
+  margin-top: 20px;
+  padding: 16px;
+  background-color: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 8px;
+  border-left: 4px solid #ff9800;
+}
+
+.duplicate-warning h4 {
+  margin: 0 0 12px 0;
+  color: #856404;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.duplicate-info {
+  margin: 8px 0;
+  color: #856404;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.duplicate-info strong {
+  color: #d68910;
+  font-weight: 600;
+}
+
+.duplicate-info code {
+  background-color: #fff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-size: 13px;
+  color: #d68910;
+  border: 1px solid #ffc107;
+}
+
+.duplicate-path {
+  margin-top: 12px;
+  padding: 8px;
+  background-color: #fff;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #856404;
+  font-family: 'Consolas', 'Monaco', monospace;
+  word-break: break-all;
+}
+
+/* 打印样式 */
+@media print {
+
+  .word-batch-rename-container .header,
+  .word-batch-rename-container .steps-indicator,
+  .word-batch-rename-container .button-group,
+  .word-batch-rename-container .file-drop-area,
+  .word-batch-rename-container .folder-select-btn {
+    display: none;
+  }
+
+  .word-batch-rename-container .main-content {
+    box-shadow: none;
+    padding: 0;
+  }
+
+  .word-batch-rename-container .summary-card,
+  .word-batch-rename-container .logs-container {
+    border: 1px solid #000000;
+    page-break-inside: avoid;
+  }
+}

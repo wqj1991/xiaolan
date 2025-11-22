@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import VLookupPage from './components/VLookupPage.vue';
+import WordBatchRenamePage from './components/WordBatchRenamePage.vue';
 
 interface FeatureItem {
   id: string;
@@ -22,111 +23,109 @@ const appTitle = "办公软件";
 // 功能分组数据
 const featureGroups = ref<FeatureGroup[]>([
   {
-        id: "office",
-        name: "Office 工具",
-        expanded: true,
-        items: [
-          {
-            id: "vlookup",
-            name: "VLOOKUP 助手",
-            icon: "📊",
-            enabled: true
-          },
-          {
-            id: "excel-formatter",
-            name: "Excel 格式化器",
-            icon: "📈",
-            enabled: false
-          },
-          {
-            id: "ppt-templates",
-            name: "PPT 模板库",
-            icon: "📑",
-            enabled: false
-          },
-          {
-            id: "word-tools",
-            name: "Word 辅助工具",
-            icon: "📝",
-            enabled: false
-          }
-        ]
+    id: "office",
+    name: "Office 工具",
+    expanded: true,
+    items: [
+      {
+        id: "vlookup",
+        name: "VLOOKUP 助手",
+        icon: "📊", enabled: true
+      }, 
+      {
+        id: "word-batch-rename",
+        name: "Word 批量命名", 
+        icon: "📋", 
+        enabled: true
       },
-  {
-        id: "data-analysis",
-        name: "数据分析",
-        expanded: true,
-        items: [
-          {
-            id: "data-visualization",
-            name: "数据可视化",
-            icon: "📊",
-            enabled: false
-          },
-          {
-            id: "statistical-analysis",
-            name: "统计分析助手",
-            icon: "📈",
-            enabled: false
-          },
-          {
-            id: "data-cleaner",
-            name: "数据清洗工具",
-            icon: "🧹",
-            enabled: false
-          }
-        ]
+      {
+        id: "excel-formatter",
+        name: "Excel 格式化器", icon: "📈",
+        enabled: false
       },
+      {
+        id: "ppt-templates",
+        name: "PPT 模板库", icon: "📑", enabled: false
+      }, {
+        id: "word-tools",
+        name: "Word 辅助工具", icon: "📝", enabled: false
+      }]
+  },
   {
-        id: "productivity",
-        name: "效率工具",
-        expanded: true,
-        items: [
-          {
-            id: "batch-rename",
-            name: "批量重命名",
-            icon: "📋",
-            enabled: false
-          },
-          {
-            id: "pdf-tools",
-            name: "PDF 处理工具",
-            icon: "📄",
-            enabled: false
-          },
-          {
-            id: "screenshot-manager",
-            name: "截图管理",
-            icon: "🖼️",
-            enabled: false
-          }
-        ]
+    id: "data-analysis",
+    name: "数据分析",
+    expanded: true,
+    items: [
+      {
+        id: "data-visualization",
+        name: "数据可视化",
+        icon: "📊",
+        enabled: false
       },
-  {
-        id: "ai-assistant",
-        name: "AI 助手",
-        expanded: true,
-        items: [
-          {
-            id: "text-summarizer",
-            name: "文本摘要",
-            icon: "📝",
-            enabled: false
-          },
-          {
-            id: "translation-tool",
-            name: "翻译工具",
-            icon: "🌐",
-            enabled: false
-          },
-          {
-            id: "content-generator",
-            name: "内容生成器",
-            icon: "🤖",
-            enabled: false
-          }
-        ]
+      {
+        id: "statistical-analysis",
+        name: "统计分析助手",
+        icon: "📈",
+        enabled: false
+      },
+      {
+        id: "data-cleaner",
+        name: "数据清洗工具",
+        icon: "🧹",
+        enabled: false
       }
+    ]
+  },
+  {
+    id: "productivity",
+    name: "效率工具",
+    expanded: true,
+    items: [
+      {
+        id: "batch-rename",
+        name: "批量重命名",
+        icon: "📋",
+        enabled: false
+      },
+      {
+        id: "pdf-tools",
+        name: "PDF 处理工具",
+        icon: "📄",
+        enabled: false
+      },
+      {
+        id: "screenshot-manager",
+        name: "截图管理",
+        icon: "🖼️",
+        enabled: false
+      }
+    ]
+  },
+  {
+    id: "ai-assistant",
+    name: "AI 助手",
+    expanded: true,
+    items: [
+      {
+        id: "text-summarizer",
+        name: "文本摘要",
+        icon: "📝",
+        enabled: false
+      },
+      {
+        id: "translation-tool",
+        name: "翻译工具",
+        icon: "🌐",
+        enabled: false
+      },
+      {
+        id: "content-generator",
+        name: "内容生成器",
+        icon: "🤖",
+        enabled: false
+      }
+    ]
+  }
 ]);
 
 // 切换分组展开/折叠状态
@@ -138,18 +137,25 @@ function toggleGroup(groupId: string) {
 }
 
 // 当前页面状态
-const currentPage = ref<'main' | 'vlookup'>('main');
+const currentPage = ref<'main' | 'vlookup' | 'word-batch-rename'>('main');
 
 // 点击功能项
 function handleFeatureClick(featureId: string) {
   console.log(`点击了功能: ${featureId}`);
   if (featureId === 'vlookup') {
     currentPage.value = 'vlookup';
+  } else if (featureId === 'word-batch-rename') {
+    currentPage.value = 'word-batch-rename';
   }
 }
 
 // 从VLookup页面返回
 function handleBackFromVLookup() {
+  currentPage.value = 'main';
+}
+
+// 从Word批量命名页面返回
+function handleBackFromWordBatchRename() {
   currentPage.value = 'main';
 }
 
@@ -160,6 +166,7 @@ function getDescription(featureId: string): string {
     'excel-formatter': '自动格式化Excel表格样式',
     'ppt-templates': '提供专业PPT模板和素材',
     'word-tools': 'Word文档编辑和格式转换',
+    'word-batch-rename': '批量重命名Word文档',
     'data-visualization': '直观展示数据图表',
     'statistical-analysis': '基础统计计算和分析',
     'data-cleaner': '快速清洗和整理数据',
@@ -185,36 +192,25 @@ function getDescription(featureId: string): string {
           <h1 class="app-title">{{ appTitle }}</h1>
         </div>
       </header>
-      
+
       <!-- 主内容区域 -->
       <main class="main-content">
         <!-- 功能卡片网格 -->
         <div class="features-grid">
-          <div 
-            v-for="group in featureGroups" 
-            :key="group.id"
-            class="features-section"
-          >
+          <div v-for="group in featureGroups" :key="group.id" class="features-section">
             <!-- 分组标题 -->
-            <div 
-              class="group-header"
-              @click="toggleGroup(group.id)"
-            >
+            <div class="group-header" @click="toggleGroup(group.id)">
               <h2 class="group-title">{{ group.name }}</h2>
               <span class="group-toggle" :class="{ 'expanded': group.expanded }">
                 {{ group.expanded ? '−' : '+' }}
               </span>
             </div>
-            
+
             <!-- 功能项卡片列表 - 仅在展开状态显示 -->
             <div v-if="group.expanded" class="cards-container">
-              <div 
-                v-for="item in group.items" 
-                :key="item.id"
+              <div v-for="item in group.items" :key="item.id"
                 :class="['feature-card', { 'feature-card-disabled': !item.enabled }]"
-                @click="item.enabled !== false && handleFeatureClick(item.id)"
-                :title="item.name"
-              >
+                @click="item.enabled !== false && handleFeatureClick(item.id)" :title="item.name">
                 <div class="card-icon">{{ item.icon || '🔧' }}</div>
                 <h3 class="card-title">{{ item.name }}</h3>
                 <div class="card-description">
@@ -227,9 +223,12 @@ function getDescription(featureId: string): string {
         </div>
       </main>
     </div>
-    
+
     <!-- VLOOKUP页面 -->
     <VLookupPage v-else-if="currentPage === 'vlookup'" @back="handleBackFromVLookup" />
+
+    <!-- Word批量命名页面 -->
+    <WordBatchRenamePage v-else-if="currentPage === 'word-batch-rename'" @back="handleBackFromWordBatchRename" />
   </div>
 </template>
 
@@ -393,6 +392,7 @@ function getDescription(featureId: string): string {
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -547,45 +547,45 @@ function getDescription(featureId: string): string {
   .app-header {
     padding: 24px 16px 20px;
   }
-  
+
   .app-title {
     font-size: 22px;
   }
-  
+
   .app-icon {
     font-size: 28px;
   }
-  
+
   .main-content {
     padding: 32px 16px;
   }
-  
+
   .features-grid {
     gap: 24px;
   }
-  
+
   .group-header {
     padding: 16px 20px;
   }
-  
+
   .group-title {
     font-size: 16px;
   }
-  
+
   .cards-container {
     grid-template-columns: 1fr;
     padding: 20px;
     gap: 16px;
   }
-  
+
   .feature-card {
     padding: 28px 20px;
   }
-  
+
   .card-icon {
     font-size: 44px;
   }
-  
+
   .card-title {
     font-size: 17px;
   }
@@ -595,23 +595,23 @@ function getDescription(featureId: string): string {
   .app-title {
     font-size: 20px;
   }
-  
+
   .app-icon {
     font-size: 24px;
   }
-  
+
   .feature-card {
     padding: 24px 18px;
   }
-  
+
   .card-icon {
     font-size: 40px;
   }
-  
+
   .card-title {
     font-size: 16px;
   }
-  
+
   .card-description {
     font-size: 12px;
   }
@@ -626,7 +626,7 @@ function getDescription(featureId: string): string {
   --color-primary-dark: #0d9488;
   --color-primary-light: #e6f7f4;
   --color-primary-lighter: #f0fdfa;
-  
+
   /* 中性色调 - 高端简洁 */
   --color-background: #ffffff;
   --color-border: rgba(0, 0, 0, 0.08);
@@ -642,7 +642,8 @@ function getDescription(featureId: string): string {
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   overflow: auto;
   -webkit-font-smoothing: antialiased;
