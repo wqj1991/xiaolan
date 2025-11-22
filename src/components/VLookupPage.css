@@ -13,7 +13,7 @@
 .vlookup-container {
   width: 100%;
   height: 100vh;
-  background-color: var(--color-background);
+  background: linear-gradient(180deg, #fafbfc 0%, #ffffff 100%);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -22,14 +22,40 @@
 .header {
   display: flex;
   align-items: center;
-  padding: 12px 16px;
-  background-color: var(--color-background);
-  border-bottom: 1px solid var(--color-border);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  padding: 20px 24px;
+  background: transparent;
+  border-bottom: none;
+  position: relative;
 }
 
-.back-button{
-  font-size: 32px;
+.header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 24px;
+  right: 24px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.06), transparent);
+}
+
+.back-button {
+  font-size: 24px;
+  color: #1a1a1a;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: rgba(0, 0, 0, 0.02);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+}
+
+.back-button:hover {
+  background: rgba(20, 184, 166, 0.1);
+  color: var(--color-primary);
+  transform: translateX(-2px);
 }
 
 .back-icon {
@@ -78,34 +104,41 @@
 }
 
 .page-title {
-  margin-left: 8px;
-  font-size: 18px;
+  margin-left: 12px;
+  font-size: 20px;
   font-weight: 600;
-  color: var(--color-text-primary);
+  color: #1a1a1a;
+  letter-spacing: -0.3px;
 }
 
 .vlookup-content {
   flex: 1;
   overflow-y: auto;
-  padding: 24px;
+  padding: 32px 24px;
+  padding-top: 0;
   display: flex;
   flex-direction: column;
   gap: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 /* 通用卡片样式 */
 .welcome-message, .function-info, .function-syntax, .file-selection-section, .vlookup-params-section, .formula-result, .header-matching-section {
-  background-color: var(--color-background);
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  padding: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  transition: all 0.2s ease;
-  animation: fadeIn 0.3s ease-out;
+  background-color: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .welcome-message:hover, .function-info:hover, .function-syntax:hover, .file-selection-section:hover, .vlookup-params-section:hover, .formula-result:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
 }
 
 .welcome-message {
@@ -202,30 +235,53 @@
   display: flex;
   flex-direction: column;
   margin-bottom: 0;
-  padding: 16px;
-  background-color: #f8f8f8;
-  border-radius: 6px;
-  /* 使用统一的边框样式，通过特定类添加不同的边框颜色 */
-  border-left: 3px solid var(--color-primary);
+  padding: 24px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
   flex: 1;
-  min-width: 0; /* 允许内容根据容器大小调整 */
+  min-width: 0;
   height: auto;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.file-select-group::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, var(--color-primary), var(--color-primary-dark));
+  border-radius: 12px 0 0 12px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.file-select-group:hover::before {
+  opacity: 1;
+}
+
+.file-select-group:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  border-color: rgba(20, 184, 166, 0.2);
 }
 
 /* 为目标Excel和数据源Excel设置不同的左侧边框颜色 */
-.file-select-group.target-excel {
-  border-left-color: var(--color-primary);
+.file-select-group.target-excel::before {
+  background: linear-gradient(180deg, var(--color-primary), var(--color-primary-dark));
 }
 
-.file-select-group.source-excel {
-  border-left-color: var(--color-primary-dark);
-  border-right: none; /* 移除右侧边框，避免双重边框 */
+.file-select-group.source-excel::before {
+  background: linear-gradient(180deg, var(--color-primary-dark), #0a7c71);
 }
 
 /* 响应式设计 - 增强优先级 */
 @media (max-width: 800px) {
   .vlookup-content {
     padding: 16px;
+    padding-top: 0;
   }
   
   /* 在小屏幕上，切换为垂直布局 */
@@ -279,10 +335,11 @@
 
 .form-group label {
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   font-size: 14px;
-  font-weight: 500;
-  color: var(--color-text-primary);
+  font-weight: 600;
+  color: #1a1a1a;
+  letter-spacing: -0.1px;
 }
 
 .file-input {
@@ -320,14 +377,14 @@
 .custom-file-upload {
   display: block;
   width: 100%;
-  padding: 16px 12px;
-  border: 2px dashed var(--color-border);
-  border-radius: 8px;
-  background-color: var(--color-background);
-  color: var(--color-text-secondary);
+  padding: 20px 16px;
+  border: 2px dashed rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  background-color: #fafbfc;
+  color: #666;
   text-align: center;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
   font-size: 14px;
@@ -336,8 +393,10 @@
 .custom-file-upload:hover,
 .custom-file-upload.active {
   border-color: var(--color-primary);
-  background-color: rgba(20, 184, 166, 0.05);
+  background-color: rgba(20, 184, 166, 0.04);
   color: var(--color-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(20, 184, 166, 0.15);
 }
 
 .custom-file-upload::before {
@@ -424,35 +483,42 @@
 
 .sheet-select, .param-input {
   width: 100%;
-  padding: 10px 12px;
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
-  background-color: var(--color-background);
+  padding: 12px 16px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  background-color: #ffffff;
   font-size: 14px;
-  color: var(--color-text-primary);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  color: #1a1a1a;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: inherit;
 }
 
 .sheet-select:focus, .param-input:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.1);
+  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
+  background-color: #ffffff;
+}
+
+.sheet-select:hover, .param-input:hover {
+  border-color: rgba(20, 184, 166, 0.3);
 }
 
 .file-info {
   display: flex;
   align-items: center;
-  margin-top: 8px;
-  padding: 8px 12px;
-  background-color: #e8f5e9;
-  border-radius: 4px;
+  margin-top: 12px;
+  padding: 12px 16px;
+  background-color: rgba(20, 184, 166, 0.06);
+  border-radius: 8px;
   font-size: 13px;
-  border: 1px solid transparent;
-  transition: border-color 0.2s ease;
+  border: 1px solid rgba(20, 184, 166, 0.15);
+  transition: all 0.3s ease;
 }
 
 .file-info:hover {
-  border-color: var(--color-primary-light);
+  background-color: rgba(20, 184, 166, 0.1);
+  border-color: rgba(20, 184, 166, 0.25);
 }
 
 .file-name {
@@ -464,26 +530,28 @@
 }
 
 .reset-button {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   padding: 0;
-  background-color: transparent;
-  border: 1px solid var(--color-primary);
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(20, 184, 166, 0.3);
   border-radius: 50%;
   color: var(--color-primary-dark);
   font-size: 18px;
   line-height: 1;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .reset-button:hover {
-  background-color: var(--color-primary-light);
-  color: var(--color-primary);
-  transform: scale(1.1);
+  background-color: var(--color-primary);
+  color: white;
+  transform: scale(1.1) rotate(90deg);
+  box-shadow: 0 2px 8px rgba(20, 184, 166, 0.3);
 }
 
 .file-input:disabled {
@@ -529,32 +597,35 @@
 }
 
 .generate-button {
-  padding: 10px 20px;
-  background-color: var(--color-primary);
+  padding: 12px 24px;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 10px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   min-width: 120px;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 2px 8px rgba(20, 184, 166, 0.2);
+  letter-spacing: 0.2px;
 }
 
 /* 合并按钮的特殊样式 */
 .generate-button.merged-button {
-  background-color: #2ecc71;
-  min-width: 160px;
-  padding: 10px 20px;
-  font-size: 16px;
+  background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+  min-width: 180px;
+  padding: 14px 28px;
+  font-size: 15px;
+  box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3);
 }
 
 .generate-button.merged-button:hover:not(:disabled) {
-  background-color: #27ae60;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(46, 204, 113, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(20, 184, 166, 0.4);
+  background: linear-gradient(135deg, #16c9b5 0%, #0fa896 100%);
 }
 
 .generate-button::before {
@@ -569,9 +640,9 @@
 }
 
 .generate-button:hover:not(:disabled) {
-  background-color: var(--color-primary-dark);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3);
+  box-shadow: 0 6px 20px rgba(20, 184, 166, 0.4);
+  background: linear-gradient(135deg, #16c9b5 0%, #0fa896 100%);
 }
 
 .generate-button:hover:not(:disabled)::before {
@@ -579,10 +650,11 @@
 }
 
 .generate-button:disabled {
-  background-color: #ccc;
+  background: #e0e0e0;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
+  opacity: 0.6;
 }
 
 .validation-error {
@@ -744,11 +816,17 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 16px;
-  background-color: #f5f5f5;
-  border-radius: 4px;
+  padding: 18px 20px;
+  background-color: #fafbfc;
+  border-radius: 10px;
   position: relative;
-  border: 1px solid #e0e0e0;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+}
+
+.formula-box:hover {
+  background-color: #f5f7fa;
+  border-color: rgba(20, 184, 166, 0.2);
 }
 
 .formula-box code {
@@ -761,39 +839,43 @@
 }
 
 .copy-button {
-  padding: 8px 16px;
-  background-color: var(--color-primary-lighter);
-  border: 1px solid var(--color-primary);
-  border-radius: 4px;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, rgba(20, 184, 166, 0.1) 0%, rgba(20, 184, 166, 0.15) 100%);
+  border: 1px solid rgba(20, 184, 166, 0.3);
+  border-radius: 8px;
   cursor: pointer;
   font-size: 14px;
+  font-weight: 600;
   color: var(--color-primary-dark);
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
 }
 
 .copy-button:hover {
-  background-color: var(--color-primary-light);
-  border-color: var(--color-primary-dark);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  border-color: var(--color-primary);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3);
 }
 
 /* 滚动条样式 */
 .vlookup-content::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 .vlookup-content::-webkit-scrollbar-track {
-  background: var(--color-background);
-  border-radius: 4px;
+  background: transparent;
+  border-radius: 3px;
 }
 
 .vlookup-content::-webkit-scrollbar-thumb {
-  background-color: var(--color-border);
-  border-radius: 4px;
-  border: 2px solid var(--color-background);
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
 }
 
 .vlookup-content::-webkit-scrollbar-thumb:hover {
-  background-color: var(--color-border-light);
+  background-color: rgba(0, 0, 0, 0.3);
 }
 
 /* 多值显示样式 */
@@ -838,6 +920,7 @@
 @media (max-width: 480px) {
   .vlookup-content {
     padding: 12px;
+    padding-top: 0; 
   }
   
   .page-title {
@@ -894,57 +977,62 @@
 
 .modal-content {
   position: relative;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
   width: 90%;
   max-width: 800px;
   max-height: 80vh;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 20px;
-  border-bottom: 1px solid #e0e0e0;
-  background-color: #f8f9fa;
+  padding: 20px 24px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  background-color: #fafbfc;
 }
 
 .modal-header h3 {
   margin: 0;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 600;
-  color: #333;
+  color: #1a1a1a;
+  letter-spacing: -0.3px;
 }
 
 .close-button {
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: 22px;
   color: #666;
   cursor: pointer;
   padding: 0;
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
-  transition: background-color 0.2s;
+  border-radius: 8px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .close-button:hover {
-  background-color: #e9ecef;
+  background-color: rgba(0, 0, 0, 0.06);
+  color: #1a1a1a;
+  transform: rotate(90deg);
 }
 
 .modal-body {
-  padding: 20px;
+  padding: 24px;
   overflow-y: auto;
   flex-grow: 1;
+  background-color: #ffffff;
 }
 
 .check-results-section {
@@ -958,10 +1046,11 @@
 .check-results-section h4,
 .formula-section h4 {
   margin-top: 0;
-  margin-bottom: 12px;
-  font-size: 16px;
+  margin-bottom: 16px;
+  font-size: 17px;
   font-weight: 600;
-  color: #333;
+  color: #1a1a1a;
+  letter-spacing: -0.2px;
 }
 
 .result-item {

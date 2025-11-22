@@ -19,9 +19,6 @@ interface FeatureGroup {
 // 应用标题
 const appTitle = "办公软件";
 
-// 搜索框内容
-const searchQuery = ref("");
-
 // 功能分组数据
 const featureGroups = ref<FeatureGroup[]>([
   {
@@ -241,53 +238,73 @@ function getDescription(featureId: string): string {
 .app-container {
   width: 100%;
   min-height: 100vh;
-  background-color: var(--color-background);
+  background: linear-gradient(180deg, #fafbfc 0%, #ffffff 100%);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
   display: flex;
   flex-direction: column;
   overflow: visible;
 }
 
-/* 头部样式 - 大气简洁版 */
+/* 头部样式 - 高端简洁版 */
 .app-header {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 24px 20px;
-  background-color: var(--color-background);
-  border-bottom: 1px solid var(--color-border);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  padding: 32px 20px 28px;
+  background: transparent;
+  border-bottom: none;
+  position: relative;
+}
+
+.app-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
+  opacity: 0.3;
 }
 
 .logo-container {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
 }
 
 .app-icon {
-  font-size: 36px;
-  transition: transform 0.3s ease;
+  font-size: 32px;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.05));
 }
 
 .app-icon:hover {
-  transform: scale(1.1);
+  transform: scale(1.08) rotate(5deg);
 }
 
 .app-title {
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--color-text-primary);
+  font-size: 26px;
+  font-weight: 600;
+  color: #1a1a1a;
   margin: 0;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.3px;
+  background: linear-gradient(135deg, #1a1a1a 0%, #4a4a4a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* 主内容区域 */
 .main-content {
   flex: 1;
   display: flex;
-  padding: 40px 20px;
+  padding: 48px 24px;
   overflow-y: auto;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 /* 功能卡片网格 */
@@ -295,20 +312,23 @@ function getDescription(featureId: string): string {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: 32px;
 }
 
 .features-section {
   width: 100%;
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 12px;
-  border: 1px solid var(--color-border);
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
   overflow: hidden;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .features-section:hover {
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
 }
 
 /* 分组标题样式 */
@@ -316,29 +336,42 @@ function getDescription(featureId: string): string {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 24px;
-  background: linear-gradient(135deg, var(--color-background) 0%, #f9fafb 100%);
-  border-bottom: 1px solid var(--color-border);
+  padding: 20px 28px;
+  background: transparent;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .group-header:hover {
-  background: var(--color-primary-light);
+  background: rgba(0, 0, 0, 0.01);
 }
 
 .group-title {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
-  color: var(--color-text-primary);
+  color: #1a1a1a;
   margin: 0;
+  letter-spacing: -0.2px;
 }
 
 .group-toggle {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 300;
+  color: #666;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.group-toggle:hover {
+  background: rgba(0, 0, 0, 0.05);
   color: var(--color-primary);
-  transition: transform 0.3s ease;
 }
 
 .group-toggle.expanded {
@@ -347,52 +380,40 @@ function getDescription(featureId: string): string {
 
 /* 功能卡片容器 */
 .cards-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 24px;
-  padding: 24px;
-  justify-content: center;
-  animation: slideDown 0.3s ease-out;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  padding: 28px;
+  animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* 展开动画 */
 @keyframes slideDown {
   from {
     opacity: 0;
-    max-height: 0;
-    padding-top: 0;
-    padding-bottom: 0;
+    transform: translateY(-10px);
   }
   to {
     opacity: 1;
-    max-height: 1000px;
-    padding-top: 24px;
-    padding-bottom: 24px;
+    transform: translateY(0);
   }
 }
 
 /* 功能卡片样式 */
 .feature-card {
   position: relative;
-  width: 320px;
-  padding: 40px 30px;
-  background: linear-gradient(135deg, var(--color-background) 0%, #f9fafb 100%);
-  border: 1px solid var(--color-border);
+  padding: 32px 24px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
   border-radius: 12px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   overflow: hidden;
-}
-
-.feature-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.08);
-  border-color: var(--color-primary);
 }
 
 .feature-card::before {
@@ -401,33 +422,40 @@ function getDescription(featureId: string): string {
   top: 0;
   left: 0;
   right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, var(--color-primary), var(--color-primary-dark));
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.3s ease;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(20, 184, 166, 0.02) 0%, rgba(20, 184, 166, 0) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+  border-color: rgba(20, 184, 166, 0.2);
 }
 
 .feature-card:hover::before {
-  transform: scaleX(1);
+  opacity: 1;
 }
 
 .card-icon {
-  font-size: 64px;
-  margin-bottom: 24px;
-  transition: transform 0.3s ease;
+  font-size: 48px;
+  margin-bottom: 20px;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.08));
 }
 
 .feature-card:hover .card-icon {
-  transform: scale(1.1);
+  transform: scale(1.15) translateY(-4px);
 }
 
 .card-title {
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 600;
-  color: var(--color-text-primary);
-  margin: 0 0 12px;
+  color: #1a1a1a;
+  margin: 0 0 10px;
   transition: color 0.3s ease;
+  letter-spacing: -0.2px;
 }
 
 .feature-card:hover .card-title {
@@ -435,43 +463,52 @@ function getDescription(featureId: string): string {
 }
 
 .card-description {
-  font-size: 15px;
-  color: var(--color-text-secondary);
+  font-size: 13px;
+  color: #666;
   line-height: 1.6;
-  margin: 0 0 20px;
+  margin: 0;
+  font-weight: 400;
 }
 
 .card-arrow {
   position: absolute;
-  bottom: 24px;
-  right: 24px;
-  font-size: 18px;
+  bottom: 20px;
+  right: 20px;
+  font-size: 16px;
   color: var(--color-primary);
   opacity: 0;
-  transform: translateX(10px);
-  transition: all 0.3s ease;
+  transform: translate(8px, 8px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: rgba(20, 184, 166, 0.08);
 }
 
 .feature-card:hover .card-arrow {
   opacity: 1;
-  transform: translateX(0);
+  transform: translate(0, 0);
 }
 
 /* 未实现功能的置灰样式 */
 .feature-card-disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
-  filter: grayscale(70%);
+  filter: grayscale(100%);
+  background: #f8f9fa;
 }
 
 .feature-card-disabled:hover {
   transform: none;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
-  border-color: var(--color-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.06);
 }
 
 .feature-card-disabled:hover::before {
-  transform: scaleX(0);
+  opacity: 0;
 }
 
 .feature-card-disabled:hover .card-icon {
@@ -479,48 +516,48 @@ function getDescription(featureId: string): string {
 }
 
 .feature-card-disabled:hover .card-title {
-  color: var(--color-text-primary);
+  color: #1a1a1a;
 }
 
 .feature-card-disabled:hover .card-arrow {
   opacity: 0;
-  transform: translateX(10px);
+  transform: translate(8px, 8px);
 }
 
 /* 滚动条样式 */
 .main-content::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 .main-content::-webkit-scrollbar-track {
-  background: var(--color-background);
+  background: transparent;
 }
 
 .main-content::-webkit-scrollbar-thumb {
-  background: var(--color-border);
-  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
 }
 
 .main-content::-webkit-scrollbar-thumb:hover {
-  background: var(--color-text-secondary);
+  background: rgba(0, 0, 0, 0.3);
 }
 
 /* 响应式调整 */
 @media (max-width: 768px) {
   .app-header {
-    padding: 20px 16px;
+    padding: 24px 16px 20px;
   }
   
   .app-title {
-    font-size: 24px;
+    font-size: 22px;
   }
   
   .app-icon {
-    font-size: 32px;
+    font-size: 28px;
   }
   
   .main-content {
-    padding: 30px 16px;
+    padding: 32px 16px;
   }
   
   .features-grid {
@@ -532,26 +569,25 @@ function getDescription(featureId: string): string {
   }
   
   .group-title {
-    font-size: 18px;
+    font-size: 16px;
   }
   
   .cards-container {
-    padding: 16px;
+    grid-template-columns: 1fr;
+    padding: 20px;
     gap: 16px;
   }
   
   .feature-card {
-    width: 100%;
-    max-width: 320px;
-    padding: 32px 24px;
+    padding: 28px 20px;
   }
   
   .card-icon {
-    font-size: 56px;
+    font-size: 44px;
   }
   
   .card-title {
-    font-size: 20px;
+    font-size: 17px;
   }
 }
 
@@ -561,19 +597,23 @@ function getDescription(featureId: string): string {
   }
   
   .app-icon {
-    font-size: 28px;
+    font-size: 24px;
   }
   
   .feature-card {
-    padding: 24px 20px;
+    padding: 24px 18px;
   }
   
   .card-icon {
-    font-size: 48px;
+    font-size: 40px;
   }
   
   .card-title {
-    font-size: 18px;
+    font-size: 16px;
+  }
+  
+  .card-description {
+    font-size: 12px;
   }
 }
 </style>
@@ -581,17 +621,17 @@ function getDescription(featureId: string): string {
 <style>
 /* 全局颜色变量定义 */
 :root {
-  /* 主色调 - 绿色系列 */
+  /* 主色调 - 现代青色系列 */
   --color-primary: #14b8a6;
   --color-primary-dark: #0d9488;
   --color-primary-light: #e6f7f4;
   --color-primary-lighter: #f0fdfa;
   
-  /* 中性色调 */
+  /* 中性色调 - 高端简洁 */
   --color-background: #ffffff;
-  --color-border: #e0e0e0;
-  --color-border-light: #f0f0f0;
-  --color-text-primary: #333333;
+  --color-border: rgba(0, 0, 0, 0.08);
+  --color-border-light: rgba(0, 0, 0, 0.04);
+  --color-text-primary: #1a1a1a;
   --color-text-secondary: #666666;
 }
 
@@ -605,6 +645,8 @@ function getDescription(featureId: string): string {
 html, body {
   height: 100%;
   overflow: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #app {
@@ -616,5 +658,6 @@ button {
   background: none;
   border: none;
   font-family: inherit;
+  cursor: pointer;
 }
 </style>
